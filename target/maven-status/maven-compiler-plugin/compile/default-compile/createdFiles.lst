@@ -1,0 +1,17 @@
+com\certiorem\workSelectorAlgoritm\algoritm\SortCandidates.class
+com\certiorem\workSelectorAlgoritm\controller\CandidatesController.class
+com\certiorem\workSelectorAlgoritm\algoritm\impl\SortCandidatesImpl.class
+com\certiorem\workSelectorAlgoritm\repositories\CandidateRepository.class
+com\certiorem\workSelectorAlgoritm\hibernate\HibernateUtil.class
+com\certiorem\workSelectorAlgoritm\model\Candidate.class
+com\certiorem\workSelectorAlgoritm\service\CompanyService.class
+com\certiorem\workSelectorAlgoritm\service\impl\CandidateServiceImpl.class
+com\certiorem\workSelectorAlgoritm\controller\CompanyController.class
+com\certiorem\workSelectorAlgoritm\model\Offer.class
+com\certiorem\workSelectorAlgoritm\App.class
+com\certiorem\workSelectorAlgoritm\service\CandidateService.class
+com\certiorem\workSelectorAlgoritm\controller\MainController.class
+com\certiorem\workSelectorAlgoritm\repositories\CompanyRepository.class
+com\certiorem\workSelectorAlgoritm\configuration\JpaConfiguration.class
+com\certiorem\workSelectorAlgoritm\service\impl\CompanyServiceImpl.class
+com\certiorem\workSelectorAlgoritm\model\Company.class

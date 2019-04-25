@@ -1,0 +1,19 @@
+ server:
+  port: 8080
+  contextPath: /workSelectorAlgoritm
+---
+spring:
+  profiles: prod
+datasource:
+  sampleapp:
+    url: jdbc:postgresql://localhost:5432/jobselector
+    username: postgres
+    password: Pa$$w0rd
+    driverClassName: org.postgresql.Driver
+    defaultSchema:
+    maxPoolSize: 20
+    hibernate:
+      hbm2ddl.method: update
+      show_sql: true
+      format_sql: true
+      dialect: org.hibernate.dialect.PostgreSQLDialect
