@@ -1,6 +1,10 @@
 package com.certiorem.workSelectorAlgoritm.controller;
 
+import java.util.Enumeration;
 import java.util.List;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,11 +37,12 @@ class CompanyController {
 	private SortCandidates sortCandidate;
 
 	@RequestMapping("/company/{name}")
-	String companyInfo(@PathVariable String name) {
+	String companyInfo(@PathVariable String name, HttpServletRequest request) {
+		
+		return buildCompletJSON(request, name);
 
-		return getCompanyInfo(name);
 	}
-	
+
 	@RequestMapping(value = "/company")
 	public String listAllCompanies() {
 		List<Company> companies = companyService.findAllCompanies();
@@ -45,11 +50,49 @@ class CompanyController {
 		System.out.println(companies);
 		return buildAllCompaniesJSON(companies);
 	}
-	
+
 	List<Company> getAllCompanies() {
 		return companyService.findAllCompanies();
 	}
 	
+	private JSONObject getHeadersInfo(HttpServletRequest request) {
+
+		JSONObject jsonObjectHeades = new JSONObject();
+
+        Enumeration<?> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String key = (String) headerNames.nextElement();
+            String value = request.getHeader(key);
+            jsonObjectHeades.put(key, value);
+        }
+
+        return jsonObjectHeades;
+    }
+	
+	public JSONObject getCookies (HttpServletRequest request)
+	{
+	  Cookie [] cookies = request.getCookies ();
+	  JSONObject jsonObjectCookies = new JSONObject();
+	  for (int i = 0; cookies != null && i < cookies.length; i++) {
+	    Cookie cookie = cookies [i];
+	    if (cookie != null) {
+	      String name = cookie.getName ();
+	       jsonObjectCookies.put(name, cookie);
+	    }
+	  }
+	  return jsonObjectCookies;
+	}
+	
+	private String buildCompletJSON(HttpServletRequest request, String name) {
+		
+		JSONObject jsonComplete = new JSONObject();
+		jsonComplete.put("companyInfo", getCompanyInfo(name));
+		jsonComplete.put("cookies", getCookies(request));
+		jsonComplete.put("headers", getHeadersInfo(request));
+
+		return jsonComplete.toString();
+	}
+
 	private String buildAllCompaniesJSON(List<Company> companiesList) {
 		JSONArray jsonCompaniesList = new JSONArray();
 		for (Company company : companiesList) {
@@ -63,28 +106,32 @@ class CompanyController {
 
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		String prettyJson = gson.toJson(json);
-		
+
 		return prettyJson;
 	}
 
-	private String getCompanyInfo(String companyName) {
+	private JSONObject getCompanyInfo(String companyName) {
 
 		Company company = companyService.findByName(companyName);
-		System.out.println(company);
-
-		sortCandidate.sort(company);
-
+		
+		System.out.println("Company: " + company);
+		
 		JSONObject companyJSON = new JSONObject();
-		companyJSON.put("CompanyName", company.getName());
-		companyJSON.put("CompanyEmail", company.getEmail());
-
-		companyJSON.put("CompanyOfferList", getCompanyOffersArray(company));
-
-		JsonParser parser = new JsonParser();
-		JsonObject json = parser.parse(companyJSON.toString()).getAsJsonObject();
-
-		return json.toString();
+		
+		if(company!=null) {
+			sortCandidate.sort(company);
+			companyJSON.put("CompanyName", company.getName());
+			companyJSON.put("CompanyEmail", company.getEmail());
+			companyJSON.put("CompanyOfferList", getCompanyOffersArray(company));
+		}else{
+			companyJSON.put("CompanyName", "No company with this name available");
+			
+		}
+		return companyJSON;
+		
 	}
+
+
 
 	private JSONArray getCompanyOffersArray(Company company) {
 		JSONArray companyOffersArray = new JSONArray();

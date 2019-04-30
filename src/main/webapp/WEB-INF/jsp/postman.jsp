@@ -30,7 +30,6 @@
 	$(document).ready(function() {
 		$('#btnSend').on('click', function() {
 			getCompanyinfo();
-
 		});
 	});
 
@@ -40,15 +39,59 @@
 			url : url,
 			type : 'get',
 		}).done(function(response) {
-			console.log("Response: " + $.parseHTML(response));
+			var allInfo = JSON.parse(response);
+			var companyInfo = allInfo.companyInfo;
+			var cookies = allInfo.cookies;
+			var headers = allInfo.headers;
+			
 			$('#json-container').jsonPresenter({
-				json : JSON.parse(response)
+				json : companyInfo
 			});
 			$('#json-container').jsonPresenter('expandAll');
-		}).fail(function() {
-			console.log("FAIL");
+			
+			$('#json-container2').jsonPresenter({
+				json : cookies
+			});
+			
+			
+			$('#json-container3').jsonPresenter({
+				json : headers
+			});
+			
+		}).fail( function( jqXHR, textStatus, errorThrown ) {
+
+			  if (jqXHR.status === 0) {
+
+			    alert('Not connect: Verify Network.');
+
+			  } else if (jqXHR.status == 404) {
+
+			    alert('Requested page not found [404]');
+
+			  } else if (jqXHR.status == 500) {
+
+			    alert('Internal Server Error [500].');
+
+			  } else if (textStatus === 'parsererror') {
+
+			    alert('Requested JSON parse failed.');
+
+			  } else if (textStatus === 'timeout') {
+
+			    alert('Time out error.');
+
+			  } else if (textStatus === 'abort') {
+
+			    alert('Ajax request aborted.');
+
+			  } else {
+
+			    alert('Uncaught Error: ' + jqXHR.responseText);
+
+			  }
 		});
 	}
+	
 </script>
 </head>
 <body>
@@ -61,6 +104,7 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-md-12">
+						<a id="errorMessage"></a>
 						<h3>Postman</h3>
 						<div class="container">
 							<div class="row">
@@ -85,21 +129,11 @@
 										</div>
 										<div class="tab-pane fade" id="nav-profile" role="tabpanel"
 											aria-labelledby="nav-profile-tab">
-											<c:forEach var="cookies" items="${cookie}">
-
-												<strong>Name=<c:out value="${cookies.key}" /></strong> Object=<c:out
-													value="${cookies.value} " />, value=<c:out
-													value="${cookies.value.value}" />
-												<br />
-
-											</c:forEach>
+											<div id="json-container2"></div>
 										</div>
 										<div class="tab-pane fade margin-left" id="nav-contact" role="tabpanel"
 											aria-labelledby="nav-contact-tab">
-											<c:forEach var="nextHeader" items="${header}">
-												<p><c:out value="${nextHeader.key}" /> = <c:out
-														value="${nextHeader.value}" />
-											</c:forEach>
+											<div id="json-container3"></div>
 										</div>
 									</div>
 								</div>
